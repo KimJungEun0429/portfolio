@@ -1,0 +1,55 @@
+create or replace NONEDITIONABLE PACKAGE BODY PKG_CONTAGION AS
+
+-- 검색 프로시저
+  PROCEDURE PROC_SEL_CONTAGION(
+        IN_CON_ID               IN              VARCHAR2,
+        O_TBL                   OUT             SYS_REFCURSOR
+        
+  ) AS
+  BEGIN
+        OPEN O_TBL FOR
+        SELECT * FROM CONTAGION_TBL WHERE CON_ID = IN_CON_ID;
+  END PROC_SEL_CONTAGION;
+
+
+--수정, 입력 프로시저
+  PROCEDURE PROC_MOD_CONTAGION(
+        IN_CON_ID               IN              VARCHAR2,
+        IN_CHK_ID               IN              VARCHAR2,
+        IN_CON_DATE             IN              VARCHAR2
+  ) AS
+    V_CON_ID                CHAR(7);
+  BEGIN
+     SELECT 'CON'|| TO_CHAR(TO_NUMBER(SUBSTR(NVL(MAX(CON_ID),'CON0000'),4)) + 1,'FM0000')
+     INTO V_CON_ID
+     FROM CONTAGION_TBL;
+     
+     
+     MERGE INTO CONTAGION_TBL
+     USING DUAL
+     ON(CON_ID = IN_CON_ID)
+     WHEN MATCHED THEN
+        UPDATE SET CHK_ID = IN_CHK_ID,
+                    CON_DATE = IN_CON_DATE
+     WHEN NOT MATCHED THEN 
+        INSERT (CON_ID,CHK_ID,CON_DATE) VALUES(V_CON_ID,IN_CHK_ID,IN_CON_DATE);
+  END PROC_MOD_CONTAGION;
+
+
+--삭제 프로시저
+  PROCEDURE PROC_DEL_CONTAGION(
+        IN_CON_ID               IN              VARCHAR2
+  ) AS
+        EXCEPT_NO_DEL           EXCEPTION;
+  BEGIN
+    DELETE FROM CONTAGION_TBL WHERE CON_ID = IN_CON_ID;
+    RAISE EXCEPT_NO_DEL;
+    
+    EXCEPTION
+        WHEN EXCEPT_NO_DEL THEN
+            ROLLBACK;
+  END PROC_DEL_CONTAGION;
+
+
+
+END PKG_CONTAGION;

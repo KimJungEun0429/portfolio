@@ -1,0 +1,29 @@
+create or replace NONEDITIONABLE PACKAGE PKG_VEHICLE AS 
+
+--PROCEDURE START
+
+    --INSERT / UPDATE
+    PROCEDURE PROC_MOD_VEHICLE 
+    (   
+        IN_VEHICLE_ID       IN      VARCHAR2,
+        IN_VEHICLE_NAME     IN      VARCHAR2
+    );
+    
+    --DELETE
+    PROCEDURE PROC_DEL_VEHICLE
+    (
+        IN_VEHICLE_ID       IN      VARCHAR2
+    );
+    
+    --SELECT
+    PROCEDURE PROC_SEL_VEHICLE
+    (   
+        IN_VEHICLE_ID   IN      VARCHAR2,
+        IN_VEHICLE_NAME IN      VARCHAR2,
+        O_CUR           OUT     SYS_REFCURSOR
+    );
+
+--PROCEDURE END
+  
+
+END PKG_VEHICLE;
